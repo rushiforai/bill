@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receipt/title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .receipt {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            padding: 20px;
+            width: 300px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .store-name {
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .date {
+            text-align: center;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+        }
+
+        .items-list {
+            margin-bottom: 20px;
+        }
+
+        .items-list p {
+            margin: 5px 0;
+        }
+
+        .total {
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="receipt">
+        <div class="store-name" id="store-name"></div>
+        <div class="date" id="date"></div>
+        <div class="items-list" id="items-list"></div>
+        <div class="total">
+            <p>Total (Including tax): $<span id="total"></span></p>
+        </div>
+    </div>
+
+    <script>
+        const storeItems = {
+            "CVS": [
+                { name: "Toothpaste", price: 3.5 },
+                { name: "Shampoo", price: 7.0 },
+                { name: "Pain Reliever", price: 5.5 },
+                { name: "Hand Sanitizer", price: 4.0 },
+                { name: "Vitamin C", price: 10.0 }
+            ],
+            "Fry's Food and Drug": [
+                { name: "Milk", price: 3.0 },
+                { name: "Eggs", price: 2.5 },
+                { name: "Cheese", price: 4.5 },
+                { name: "Cereal", price: 4.0 },
+                { name: "Chicken Breast", price: 8.0 }
+            ],
+            "Kroger": [
+                { name: "Apples", price: 2.0 },
+                { name: "Lettuce", price: 1.5 },
+                { name: "Bread", price: 2.0 },
+                { name: "Tomatoes", price: 3.0 },
+                { name: "Pasta", price: 1.8 }
+            ],
+            "Walmart": [
+                { name: "Water Bottle", price: 5.0 },
+                { name: "Shampoo", price: 6.0 },
+                { name: "Toothbrush", price: 2.5 },
+                { name: "Cereal", price: 4.0 },
+                { name: "Frozen Pizza", price: 7.5 }
+            ],
+            "Sprouts": [
+                { name: "Organic Eggs", price: 5.5 },
+                { name: "Organic Milk", price: 4.0 },
+                { name: "Spinach", price: 3.0 },
+                { name: "Almond Butter", price: 8.0 },
+                { name: "Granola", price: 6.5 }
+            ],
+            "Walgreens": [
+                { name: "Vitamins", price: 9.0 },
+                { name: "Bandages", price: 2.5 },
+                { name: "Cough Syrup", price: 7.5 },
+                { name: "Toothpaste", price: 3.0 },
+                { name: "Face Wash", price: 5.0 }
+            ],
+            "Circle-K": [
+                { name: "Gas", price: 40.0 },
+                { name: "Snacks", price: 3.5 },
+                { name: "Soda", price: 2.0 },
+                { name: "Coffee", price: 1.5 }
+            ],
+            "SafeWay": [
+                { name: "Bread", price: 2.0 },
+                { name: "Milk", price: 3.5 },
+                { name: "Butter", price: 4.0 },
+                { name: "Cheese", price: 5.0 },
+                { name: "Cereal", price: 4.0 }
+            ],
+            "Lowe's": [
+                { name: "Drill", price: 99.0 },
+                { name: "Hammer", price: 12.0 },
+                { name: "Nails", price: 3.0 },
+                { name: "Paint", price: 25.0 },
+                { name: "Light Bulbs", price: 6.0 }
+            ],
+            "Target": [
+                { name: "Shampoo", price: 5.0 },
+                { name: "Toothpaste", price: 3.5 },
+                { name: "Cereal", price: 4.0 },
+                { name: "Pillows", price: 12.0 },
+                { name: "Toothbrush", price: 2.0 }
+            ],
+            "Home Depot": [
+                { name: "Screwdriver", price: 8.0 },
+                { name: "Wood Planks", price: 15.0 },
+                { name: "Paintbrush", price: 5.0 },
+                { name: "Lumber", price: 20.0 },
+                { name: "Glue", price: 3.0 }
+            ],
+            "Whole Foods Market": [
+                { name: "Organic Chicken", price: 12.0 },
+                { name: "Organic Apples", price: 3.5 },
+                { name: "Avocados", price: 1.8 },
+                { name: "Olive Oil", price: 10.0 },
+                { name: "Almond Milk", price: 4.0 }
+            ],
+            "Ulta Beauty": [
+                { name: "Shampoo", price: 7.0 },
+                { name: "Conditioner", price: 6.0 },
+                { name: "Makeup Brushes", price: 15.0 },
+                { name: "Face Cream", price: 20.0 },
+                { name: "Lipstick", price: 10.0 }
+            ],
+            "Total Wine & More": [
+                { name: "Red Wine", price: 15.0 },
+                { name: "White Wine", price: 12.0 },
+                { name: "Whiskey", price: 30.0 },
+                { name: "Beer", price: 9.0 },
+                { name: "Champagne", price: 40.0 }
+            ],
+            "Albertsons": [
+                { name: "Eggs", price: 2.5 },
+                { name: "Milk", price: 3.0 },
+                { name: "Cheese", price: 4.0 },
+                { name: "Yogurt", price: 5.0 },
+                { name: "Bread", price: 2.5 }
+            ],
+            "Costco": [
+                { name: "Toilet Paper", price: 20.0 },
+                { name: "Kirkland Coffee", price: 15.0 },
+                { name: "Cereal", price: 10.0 },
+                { name: "Chicken", price: 40.0 },
+                { name: "Eggs", price: 6.0 }
+            ],
+            "Hallmark": [
+                { name: "Greeting Cards", price: 3.0 },
+                { name: "Gift Bags", price: 5.0 },
+                { name: "Gift Wrap", price: 2.5 },
+                { name: "Candles", price: 8.0 },
+                { name: "Stuffed Animals", price: 12.0 }
+            ],
+            "Go The Vitamin Shoppe": [
+                { name: "Protein Powder", price: 25.0 },
+                { name: "Vitamins", price: 15.0 },
+                { name: "Energy Bars", price: 3.5 },
+                { name: "Omega-3", price: 10.0 },
+                { name: "Pre-Workout", price: 20.0 }
+            ],
+            "Sam's Club": [
+                { name: "Toilet Paper", price: 18.0 },
+                { name: "Bulk Chicken", price: 45.0 },
+                { name: "Cereal", price: 12.0 },
+                { name: "Lemonade", price: 7.5 },
+                { name: "Frozen Vegetables", price: 8.0 }
+            ],
+            "Dollar General": [
+                { name: "Cereal", price: 4.0 },
+                { name: "Shampoo", price: 2.5 },
+                { name: "Toothpaste", price: 1.5 },
+                { name: "Snacks", price: 3.0 },
+                { name: "Toothbrush", price: 1.0 }
+            ],
+            "Aldi": [
+                { name: "Eggs", price: 2.0 },
+                { name: "Milk", price: 2.5 },
+                { name: "Bread", price: 1.5 },
+                { name: "Cheese", price: 3.0 },
+                { name: "Cereal", price: 4.0 }
+            ],
+            "Market Street": [
+                { name: "Bananas", price: 1.0 },
+                { name: "Lettuce", price: 2.0 },
+                { name: "Tomatoes", price: 3.0 },
+                { name: "Chicken", price: 7.5 },
+                { name: "Cheese", price: 5.0 }
+            ]
+        };
+
+        // Function to generate a receipt
+        function generateReceipt() {
+            const storeNames = Object.keys(storeItems);
+            const randomStore = storeNames[Math.floor(Math.random() * storeNames.length)];
+            const storeName = randomStore;
+            const items = storeItems[randomStore];
+
+            let billItems = [];
+            let total = 0;
+
+            // Random number of items between 5 and 10
+            const itemCount = Math.floor(Math.random() * 6) + 5;
+
+            for (let i = 0; i < itemCount; i++) {
+                const randomItem = items[Math.floor(Math.random() * items.length)];
+                const quantity = Math.floor(Math.random() * 3) + 1; // Quantity between 1 and 3
+                let itemTotal = randomItem.price * quantity;
+
+                // Add item to billItems or update quantity if already added
+                const existingItem = billItems.find(item => item.name === randomItem.name);
+                if (existingItem) {
+                    existingItem.quantity += quantity;
+                    existingItem.total = (existingItem.quantity * existingItem.price).toFixed(2);
+                } else {
+                    billItems.push({
+                        name: randomItem.name,
+                        quantity: quantity,
+                        price: randomItem.price,
+                        total: itemTotal.toFixed(2)
+                    });
+                }
+
+                total += itemTotal;
+            }
+
+            // Adding tax
+            const taxRate = 0.08; // 8% tax
+            const tax = (total * taxRate).toFixed(2);
+            total = (total + parseFloat(tax)).toFixed(2);
+
+            // Set store name and date
+            const storeDate = new Date();
+            document.getElementById("store-name").innerText = storeName;
+            document.getElementById("date").innerText = `Date: ${storeDate.toLocaleDateString()}`;
+
+            // Set the item list
+            let itemListHTML = '';
+            billItems.forEach(item => {
+                itemListHTML += `<p>${item.name} x${item.quantity} - $${item.total}</p>`;
+            });
+            document.getElementById("items-list").innerHTML = itemListHTML;
+
+            // Set the total
+            document.getElementById("total").innerText = total;
+        }
+
+        // Call the function to generate a new bill on page load
+        generateReceipt();
+    </script>
+</body>
+</html>
